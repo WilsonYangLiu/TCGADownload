@@ -1,0 +1,3 @@
+include README.md LICENSE tests.py
+recursive-include TCGADownloader *.py
+recursive-include data tmp_manifest.*

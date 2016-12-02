@@ -25,3 +25,7 @@ Once the prerequisites are installed, you should be able to install TCGADownload
 ```
 pip install TCGADownloader
 ```
+
+## Mail
+
+lweixin316@gamil.com

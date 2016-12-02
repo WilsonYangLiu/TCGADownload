@@ -31,6 +31,8 @@ import json
 from itertools import islice
 from time import sleep
 
+__all__ = ["BaseClient", "gdcSNVClient", "gdcFileClient"]
+
 class DownloadError(KeyError):
 	pass
 	
@@ -276,6 +278,9 @@ class gdcFileClient(BaseClient):
 				Note that first element must be the file id (uuid). Default to [7, 3, 8], meaning that the 7th file id (uuid),
 				3rd file name on the TCGA server and 8th the aliquots submitter id (cases_samples_portions_analytes_aliquots_submitter_id)
 			fields_retieved_str: the STRING verfion of the fields that retieved from the uuid_info_file.
+				For clinic data: ['file_id', 'cases_0_submitter_id', 'file_name']
+				for trancripome data and CNV data: ['file_id', 'cases_0_samples_0_portions_0_analytes_0_aliquots_0_submitter_id', 'file_name']
+				Default to trancripome data and CNV data
 		'''
 		BaseClient.__init__(self, manifest_file, DIR)
 		
@@ -329,11 +334,20 @@ class gdcFileClient(BaseClient):
 		'''
 		BaseClient.gdcDownload(self, ID, name)
 	
-	def fileDownload(self, END=None):
+	def fileDownload(self, END=None, uuidFromFile=True):
 		''' 
 		Download a set of files base on the uuids
+		
+		Parameters:
+			uuidFromFile: Does the uuid from the uuid_info_file? Default to `True`
+				If `False`, it means you can set your own uuid instead from uuid_info_file
 		'''
-		self._set_uuid2filename()
+		if not self.uuid:
+			print('[Warning] this instance does not contain any file id (uuid)\n\tFile id would be extracted from [{}]'.format(self.manifest_file))
+			uuidFromFile = True
+		
+		self._set_uuid2filename(uuidFromFile=uuidFromFile)
+			
 		for ID in self.uuid:
 			self.gdcDownload(ID, self.uuid2filename[ID] )
 			sleep(1)
@@ -349,30 +363,50 @@ class gdcFileClient(BaseClient):
 			fields_retieved_str = self._fields_retieved_str
 		
 		if not self._uuid_info_file_header:
-			self.fileInfo()
-		else:
-			header = self._uuid_info_file_header.strip().split('\t')
+			if not os.path.isfile('/'.join([self.DIR, self.uuid_info_file] ) ):
+				self.fileInfo()
+				
+			with open('/'.join([self.DIR, self.uuid_info_file] ), 'rb') as f:
+				for line in islice(f, 0, 1):
+					self._uuid_info_file_header = line.strip()
+					
+		header = self._uuid_info_file_header.strip().split('\t')
+		try:
 			self.fields_retieved = [header.index(str) for str in fields_retieved_str]
+		except Exception, e:
+			print(e)
+			print('''
+[Suggest] If you try to download "clinic" data, set: 
+`your instance name`._fields_retieved_str = ['file_id', 'cases_0_submitter_id', 'file_name'].
+Ortherwise, check your uuid_info_file and set your own `your instance name`._fields_retieved_str
+''')
 
-	def _set_uuid2filename(self, END=None):
+	def _set_uuid2filename(self, END=None, uuidFromFile=True):
 		'''
 		Construct the display file name in disk from the 'uuid_info_file' for the corresponding file id (uuid)
+		
+		Parameters:
+			uuidFromFile: Does the uuid from the uuid_info_file? Default to `True`
+				If `False`, it means you must set your own uuid instead from uuid_info_file
 		'''
-		self.get_uuid()
-		if not os.path.isfile(self.uuid_info_file):
+		if uuidFromFile:
+			self.get_uuid()
+			
+		if not os.path.isfile('/'.join([self.DIR, self.uuid_info_file] ) ):
 			self.fileInfo()
 			
 		with open('/'.join([self.DIR, self.uuid_info_file] ), 'rb') as f:
-			for line in islice(f, 1, END):
-				line = line.strip().split('\t')
-				self.uuid2filename[line[self.fields_retieved[0] ] ] = '.'.join([line[self.fields_retieved[1] ], line[self.fields_retieved[2] ] ] )
-		'''		
-		KEY = self.uuid2filename.keys()
-		if KEY.sort() != self.uuid.sort():
-			raise KeyError
-		'''
+			try:
+				for line in islice(f, 1, END):
+					line = line.strip().split('\t')
+					self.uuid2filename[line[self.fields_retieved[0] ] ] = '.'.join([line[self.fields_retieved[1] ], line[self.fields_retieved[2] ] ] )
+			except Exception, e:
+				print(e)
+				print('''
+[Suggest] If you try to download "clinic" data, set: 
+`your instance name`._fields_retieved_str = ['file_id', 'cases_0_submitter_id', 'file_name'].
+Then run `your instance name`.set_fields_retieved().
+Ortherwise, check your uuid_info_file and set your own `your instance name`._fields_retieved_str 
+and run `your instance name`.set_fields_retieved().
+''')
 
-
-		
-		
-	

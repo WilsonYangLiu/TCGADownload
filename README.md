@@ -1,7 +1,5 @@
 # TCGADownloader ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg) ![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)
 
-
-
 ## License
 
 Please see the [repository license]() for the licensing and usage information for the TCGADownloader package.
@@ -22,9 +20,11 @@ pip install requests
 
 Once the prerequisites are installed, you should be able to install TCGADownloader with a pip command:
 
-```
-pip install TCGADownloader
-```
+Add this to your python PATH
+
+## Usage
+
+See test.py
 
 ## Mail
 

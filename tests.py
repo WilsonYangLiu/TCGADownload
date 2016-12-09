@@ -24,6 +24,13 @@ def example_2():
 	#Downloader.fileInfo()
 	Downloader.fileDownload()
 
+def example3():
+	Downloader = gdcSNVClient('./manifest.txt')
+	Downloader._fields_retieved_str = ['file_id', 'cases_0_submitter_id', 'file_name']
+	Downloader.set_fields_retieved()
+	Downloader.fileDownload()
+
 if __name__ == '__main__':
-	example_1()
-	example_2()
+	#example_1()
+	#example_2()
+	example3()

@@ -20,7 +20,7 @@ pip install requests
 
 Once the prerequisites are installed, you should be able to install TCGADownloader with a pip command:
 
-Add this to your python PATH
+Add folder TCGADownloader/TCGADownloader to your python PATH variable
 
 ## Usage
 

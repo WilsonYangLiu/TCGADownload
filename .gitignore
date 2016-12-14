@@ -91,4 +91,6 @@ ENV/
 
 # my setting
 *.gz
+*.xml
 uuid_info_file*
+

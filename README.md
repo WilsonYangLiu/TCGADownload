@@ -2,7 +2,7 @@
 
 ## License
 
-Please see the [repository license]() for the licensing and usage information for the TCGADownloader package.
+Please see the ![repository license](https://github.com/WilsonYangLiu/TCGADownload/blob/master/LICENSE) for the licensing and usage information for the TCGADownloader package.
 
 Generally, we have licensed the TCGADownloader package to make it as widely usable as possible.
 
@@ -20,7 +20,7 @@ pip install requests
 
 Once the prerequisites are installed, you should be able to install TCGADownloader with a pip command:
 
-Add this to your python PATH
+Add folder TCGADownloader/TCGADownloader to your python PATH variable
 
 ## Usage
 

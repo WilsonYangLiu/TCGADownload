@@ -93,4 +93,5 @@ ENV/
 *.gz
 *.xml
 uuid_info_file*
+/data/*.csv
 

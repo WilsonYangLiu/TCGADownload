@@ -5,7 +5,10 @@ from __future__ import print_function
 """
 
 import os
+import pandas as pd
+from pandas import DataFrame, Series
 from TCGADownloader.gdcFileClient import *
+from TCGADownloader import DataProcess
 
 os.chdir(r'E:/Project_G/db.TCGA/TCGADownloader')
 #os.chdir(r'/media/wilson/b776f228-366c-4e52-acd6-65df5b458e8c/Project_G/db.TCGA/TCGADownloader')
@@ -30,9 +33,25 @@ def clinical():
 	Downloader._fields_retieved_str = ['file_id', 'cases_0_submitter_id', 'file_name']
 	Downloader.set_fields_retieved()
 	Downloader.fileDownload()
+	
+def dataProcess():
+	# Load the info file first
+	uuid_info_DF = pd.read_table(r'./data/uuid_info_file.trans_GeneExp.tsv', sep='\t')
+	# Filter the info by using the `DataProcess.filter` meathod
+	obj = DataProcess.filter(uuid_info_DF, filt={'cases_0_samples_0_sample_type': ('==', 'Primary Tumor'),\
+										'analysis_workflow_type': ('==', 'HTSeq - FPKM') } )
+	obj = obj.ix[:, ['file_name', 'cases_0_samples_0_portions_0_analytes_0_aliquots_0_submitter_id'] ]
+	# Combine the info of obj to construct the file name defined in `gdcFileClient`: [barcode].[origin filename]
+	nameList = []
+	for idx in range(obj.shape[0]):
+		nameList.append('.'.join([obj.iloc[idx][1], obj.iloc[idx][0] ] ) )
+	# Integrate the selected file
+	itData = DataProcess.integration(nameList, DIR='./data/')
+	itData.to_csv(r'./data/COADREAD_trans_GeneExp_FPKM.csv')
 
 if __name__ == '__main__':
 	#expression()
 	#SNV()
 	#clinical()
+	#dataProcess()
 	pass

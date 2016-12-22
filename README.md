@@ -11,11 +11,15 @@ Generally, we have licensed the TCGADownloader package to make it as widely usab
 TCGADownloader is built on top of the following existing Python packages:
 
 * requests
+* numpy
+* pandas
 
 requests can be installed via pip:
 
 ```
 pip install requests
+pip install numpy
+pip install pandas
 ```
 
 Once the prerequisites are installed, you should be able to install TCGADownloader with a pip command:

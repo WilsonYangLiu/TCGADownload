@@ -131,7 +131,7 @@ def progbar(LEN, i):
 		sys.stdout.flush()
 		
 def work():
-	data = gtfClient(r'./gencode.v22.annotation.gtf.gz', selected_fld=[3, 4], attr_fld=['gene_id', 'gene_name'], LEN=2563676, To_file=True)
+	data = gtfClient(r'./gencode.v22.annotation.gtf.gz', selected_fld=[2, 3, 4], attr_fld=['gene_id', 'gene_name'], LEN=2563676, To_file=True)
 	if isinstance(data, DataFrame):
 		data['length'] = pd.to_numeric(data['end']) - pd.to_numeric(data['start'])
 		del data['end']
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 	#work()
 	
 	os.chdir(r'E:/Project_G/db.TCGA/TCGADownloader/script')
-	data = gtfClient(r'../data/tmp.gencode.annotation.gtf.gz', selected_fld=[3,4], attr_fld=['gene_id'], LEN=336, To_file=False)
+	data = gtfClient(r'../data/tmp.gencode.annotation.gtf', selected_fld=[3,4], attr_fld=['gene_id'], LEN=336, To_file=True)
 	if isinstance(data, DataFrame):
 		data['length'] = pd.to_numeric(data['end']) - pd.to_numeric(data['start'])
 		del data['end']

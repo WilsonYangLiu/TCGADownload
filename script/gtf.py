@@ -131,12 +131,12 @@ def progbar(LEN, i):
 		sys.stdout.flush()
 		
 def work():
-	data = gtfClient(r'./gencode.v22.annotation.gtf.gz', selected_fld=[2, 3, 4], attr_fld=['gene_id', 'gene_name'], LEN=2563676, To_file=True)
+	data = gtfClient(r'../data/gencode.v22.annotation.gtf.gz', selected_fld=[2, 3, 4], attr_fld=['gene_id', 'gene_name'], LEN=2563676, To_file=True)
 	if isinstance(data, DataFrame):
 		data['length'] = pd.to_numeric(data['end']) - pd.to_numeric(data['start'])
 		del data['end']
 		del data['start']
-		data.to_csv(r'./gencode.v22.annotation.filter.csv')
+		data.to_csv(r'../data/gencode.v22.annotation.filter.csv')
 			
 if __name__ == '__main__':
 	#work()

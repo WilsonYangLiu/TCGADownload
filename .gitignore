@@ -90,8 +90,6 @@ ENV/
 .ropeproject
 
 # my setting
-*.gz
 *.xml
-uuid_info_file*
-/data/*.csv
+
 

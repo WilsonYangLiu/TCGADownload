@@ -23,6 +23,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-from ._version import __version__
-import gdcFileClient
-import DataProcess
+__version__ = '1.0'

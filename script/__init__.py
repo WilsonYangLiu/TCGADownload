@@ -24,5 +24,6 @@ SOFTWARE.
 '''
 
 from ._version import __version__
-import gdcFileClient
-import DataProcess
+import gtf
+import calcFPKM
+import calcTPM

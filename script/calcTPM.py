@@ -32,7 +32,7 @@ from pandas import DataFrame, Series
 from itertools import islice
 from calcFPKM import FPKM
 
-def TPM(Table, GeneLenDict):
+def TPM(Table, GeneLenDict, from_RAW=True):
 	'''
 	Parameters:
 		Table: DataFrame. It stores the read count table for each gene in each sample
@@ -41,9 +41,10 @@ def TPM(Table, GeneLenDict):
 	Returns:
 		Table: DataFrame. It stores the TPM table for each gene in each sample
 	'''
-	Table = FPKM(Table, GeneLenDict)
-	Table = Table.iloc[:-5,:]
-	return Table
+	if from_RAW:
+		Table = FPKM(Table, GeneLenDict)
+		Table = Table.iloc[:-5,:]
+
 	Lib = np.sum(Table, axis=0)
 	for col in Table.columns:
 		for gene in GeneLenDict.keys():

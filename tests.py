@@ -7,8 +7,8 @@ from __future__ import print_function
 import os
 import pandas as pd
 from pandas import DataFrame, Series
-from TCGADownloader.gdcFileClient import *
-from TCGADownloader import DataProcess
+from Client import *
+from script import *
 
 os.chdir(r'E:/Project_G/db.TCGA/TCGADownloader')
 #os.chdir(r'/media/wilson/b776f228-366c-4e52-acd6-65df5b458e8c/Project_G/db.TCGA/TCGADownloader')
@@ -40,7 +40,7 @@ def clinical():
 	Downloader.set_fields_retieved()
 	Downloader.fileDownload()
 	
-def dataProcess():
+def dataInte():
 	# Load the info file first
 	uuid_info_DF = pd.read_table(r'./data/uuid_info_file.trans_GeneExp.tsv', sep='\t')
 	# Filter the info by using the `DataProcess.filter` meathod
@@ -54,10 +54,24 @@ def dataProcess():
 	# Integrate the selected file
 	itData = DataProcess.integration(nameList, DIR='./data/')
 	itData.to_csv(r'./data/COADREAD_trans_GeneExp_Counts.csv')
+	
+def processGTF():
+	data = gtfClient(r'./data/tmp.gencode.annotation.gtf', selected_fld=[3,4], attr_fld=['gene_id'], LEN=336, To_file=True)
+	if isinstance(data, DataFrame):
+		data['length'] = pd.to_numeric(data['end']) - pd.to_numeric(data['start'])
+		del data['end']
+		del data['start']
+		data.to_csv(r'./data/tmp.gencode.annotation.filter.csv')
+
+def ssn():
+	pass
 
 if __name__ == '__main__':
 	#expression()
+	#CNV()
 	#SNV()
 	#clinical()
-	#dataProcess()
+	#dataInte()
+	#processGTF()
+	#gtf.work()
 	pass

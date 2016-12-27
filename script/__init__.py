@@ -24,6 +24,5 @@ SOFTWARE.
 '''
 
 from ._version import __version__
-import gtf
-import calcFPKM
-import calcTPM
+from FPKM import calcFPKM
+from TPM import calcTPM

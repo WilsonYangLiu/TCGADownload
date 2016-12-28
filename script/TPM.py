@@ -39,17 +39,34 @@ def calcTPM(Table, GeneLenDict, from_RAW=True):
 		GeneLenDict: a Dict stores the length of each gene
 		
 	Returns:
-		fpkmTable: DataFrame. It stores the TPM table for each gene in each sample
+		tmpTable: DataFrame. It stores the TPM table for each gene in each sample
 	'''
 	if from_RAW:
-		fpkmTable = calcFPKM(Table, GeneLenDict)
-		fpkmTable = fpkmTable.iloc[:-5,:]
+		Table = calcFPKM(Table, GeneLenDict)
+		if isinstance(Table, DataFrame):
+			Table = Table.iloc[:-5,:]
+		elif isinstance(Table, Series):
+			Table = Table[:-5]
+		else:
+			print(r'the type of data should be DataFrame or Series')
+			raise Exception
 
-	tpmTable = DataFrame(fpkmTable)
-	Lib = np.sum(fpkmTable, axis=0)
-	for col in fpkmTable.columns:
+	if isinstance(Table, DataFrame):
+		tpmTable = DataFrame(Table)
+		Lib = np.sum(Table, axis=0)
+		for col in Table.columns:
+			for gene in GeneLenDict.keys():
+				tpmTable.ix[gene, col] = 10e6 * Table.ix[gene, col] / Lib[col]
+				
+	elif isinstance(Table, Series):
+		tpmTable = Series(Table)
+		Lib = np.sum(Table, axis=0)
 		for gene in GeneLenDict.keys():
-			tpmTable.ix[gene, col] = 10e6 * fpkmTable.ix[gene, col] / Lib[col]
+			tpmTable[gene] = 10e6 * Table[gene] / Lib
+	
+	else:
+		print(r'the type of data should be DataFrame or Series')
+		raise Exception
 			
 	return tpmTable
 	
@@ -62,7 +79,7 @@ if __name__ == '__main__':
 		spamreader = csv.reader(csvfile)
 		GeneLenDict = {line[0]:int(line[2]) for line in islice(spamreader, 1, None) }
 		
-	Table = calcTPM(Table, GeneLenDict)
+	Table = calcTPM(Table.iloc[:,0], GeneLenDict)
 	#Table.to_csv(r'../data/COADREAD_trans_GeneExp_Counts2TPM.csv')
 	
 	

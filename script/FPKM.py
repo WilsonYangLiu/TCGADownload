@@ -40,11 +40,21 @@ def calcFPKM(Table, GeneLenDict):
 	Returns:
 		Table: DataFrame. It stores the FPKM table for each gene in each sample
 	'''
-	Lib = np.sum(Table, axis=0)
-	for col in Table.columns:
+	if isinstance(Table, DataFrame):
+		Lib = np.sum(Table, axis=0)
+		for col in Table.columns:
+			for gene in GeneLenDict.keys():
+				Table.ix[gene, col] = 10e9 * Table.ix[gene, col] / (GeneLenDict[gene] * Lib[col] )
+		
+	elif isinstance(Table, Series):
+		Lib = np.sum(Table, axis=0)
 		for gene in GeneLenDict.keys():
-			Table.ix[gene, col] = 10e9 * Table.ix[gene, col] / (GeneLenDict[gene] * Lib[col] )
-			
+			Table[gene] = 10e9 * Table[gene] / (GeneLenDict[gene] * Lib )
+		
+	else:
+		print(r'the type of data should be DataFrame or Series')
+		raise Exception
+		
 	return Table
 	
 if __name__ == '__main__':
@@ -56,9 +66,15 @@ if __name__ == '__main__':
 		spamreader = csv.reader(csvfile)
 		GeneLenDict = {line[0]:int(line[2]) for line in islice(spamreader, 1, None) }
 		
-	Table = calcFPKM(Table, GeneLenDict)
-	Table = Table.iloc[:-5,:]
-	Table.to_csv(r'../data/COADREAD_trans_GeneExp_Counts2FPKM.exon.csv')
+	Table = calcFPKM(Table.iloc[:,0], GeneLenDict)
+	if isinstance(Table, DataFrame):
+		Table = Table.iloc[:-5,:]
+	elif isinstance(Table, Series):
+		Table = Table[:-5]
+	else:
+		print(r'the type of data should be DataFrame or Series')
+		raise Exception
+	#Table.to_csv(r'../data/COADREAD_trans_GeneExp_Counts2FPKM.exon.csv')
 	
 	
 	

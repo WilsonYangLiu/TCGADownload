@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 import pandas as pd
 from pandas import DataFrame, Series
-from Client import *
+from client import *
 from script import *
 
 os.chdir(r'E:/Project_G/db.TCGA/TCGADownloader')
@@ -63,8 +63,24 @@ def processGTF():
 		del data['start']
 		data.to_csv(r'./data/tmp.gencode.annotation.filter.csv')
 
-def ssn():
-	pass
+def ssn(filename):
+	# Get the background network
+	with open(r'./data.ssn/link.higher9.ENSG.tsv', 'rb') as handle:
+		links = [line.strip().split('\t') for line in handle]
+	
+	# Get the expression dataframe of reference network. This dataframe was obtained by performing the normalization presedure
+	refExprDF = pd.read_csv(r'./data.ssn/COADREAD_trans_GeneExp_TPM_Normal_selected.csv', index_col=0)
+	refExprDF.index = SSN.remove_vesion(refExprDF.index)
+	
+	# Get the expression dataframe of all testable experiment sample.
+	exptExprDF = pd.read_csv(filename, index_col=0)
+	exptExprDF.index = SSN.remove_vesion(exptExprDF.index)
+	exptExprDF = exptExprDF.reindex(refExprDF.index)
+	
+	onessn = SSNClient(refExprDF, exptExprDF.iloc[:,0], links, silent=True, DIR='./data.ssn/')
+	print('[WORKING] {}...'.format(exptExprDF.iloc[:,0].name) )
+	onessn.calcAllPair()
+	print('[DONE] {}.\n   {} of nodes does not exist in index'.format(exptExprDF.iloc[:,0].name, len(ssn.nodeNotInIndex) ) )
 
 if __name__ == '__main__':
 	#expression()
@@ -74,4 +90,5 @@ if __name__ == '__main__':
 	#dataInte()
 	#processGTF()
 	#gtf.work()
+	ssn(r'./data.ssn/exptExprSeries.csv')
 	pass

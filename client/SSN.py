@@ -35,7 +35,7 @@ from scipy.stats import norm
 from time import ctime
 
 class SSNClient(object):
-	def __init__(self, reference, experiment, background, silent=True):
+	def __init__(self, reference, experiment, background, silent=True, DIR='./'):
 		'''
 		Parameters:
 			reference: DataFrame (N * m). the expression dataframe of reference network
@@ -46,6 +46,7 @@ class SSNClient(object):
 			silent: Boolean. default to True, means the result will write to file directly. 
 				Otherwise, the calcutale result will save to memory, which was not recommended. 
 				However, when True, you can still use the meathod 'onePair' to calcutale single-sample network of a pair one by one
+			DIR: the directory used to store the resulting files
 		'''
 		if not np.all(reference.index == experiment.index):
 			print(r'[ERROR] Index between reference and experiment must be same')
@@ -60,6 +61,7 @@ class SSNClient(object):
 		self.experiment = experiment
 		self.background = background
 		self.silent = silent
+		self.DIR = DIR
 		
 		self.num = self.reference.shape[1]	# the number of reference samples
 		if self.num < 3:
@@ -110,7 +112,7 @@ class SSNClient(object):
 			return pcc1, pcc2, self._calc_pval(self.num, pcc2-pcc1, pcc1)
 
 		else:
-			with open(r'{}.log'.format(self.experiment.name), 'a+') as handle:
+			with open(r'{}{}.log'.format(self.DIR, self.experiment.name), 'a+') as handle:
 				if pr[0] not in self.indexes:
 					self.nodeNotInIndex.add(pr[0] )
 					handle.write('[WARNING] node [{}] in indexes\n'.format(pr[0] ) )
@@ -125,7 +127,7 @@ class SSNClient(object):
 		
 		'''
 		if self.silent:
-			with open(r'{}.{}.tsv'.format(self.experiment.name, '_'.join(ctime().replace(':', '_').split(' ')[:3] ) ), 'wb') as handle:
+			with open(r'{}{}.{}.tsv'.format(self.DIR, self.experiment.name, '_'.join(ctime().replace(':', '_').split(' ')[:3] ) ), 'wb') as handle:
 				handle.write('#node1\tnode2\tPCC_n\tPCC_n+1\tp_val\n')
 				for pr in self.background:
 					pcc1, pcc2, p_value = self.onePair(pr)

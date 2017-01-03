@@ -27,3 +27,4 @@ from ._version import __version__
 from FPKM import calcFPKM
 from TPM import calcTPM
 from Filter import ssnFilter
+from Clust import ssnDistMat

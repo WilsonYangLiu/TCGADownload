@@ -115,10 +115,10 @@ class SSNClient(object):
 			with open(r'{}{}.log'.format(self.DIR, self.experiment.name), 'a+') as handle:
 				if pr[0] not in self.indexes:
 					self.nodeNotInIndex.add(pr[0] )
-					handle.write('[WARNING] node [{}] in indexes\n'.format(pr[0] ) )
+					handle.write('[WARNING] node [{}] not in indexes\n'.format(pr[0] ) )
 				if pr[1] not in self.indexes:
 					self.nodeNotInIndex.add(pr[1] )
-					handle.write('[WARNING] node [{}] in indexes\n'.format(pr[1] ) )
+					handle.write('[WARNING] node [{}] not in indexes\n'.format(pr[1] ) )
 			
 			return -1,-1,-1
 			

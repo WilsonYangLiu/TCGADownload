@@ -52,7 +52,7 @@ def gffClient(filename, selected_fld=None, attr_fld=None, LEN=None, To_file=Fals
 		gffopen = open
 		outfile = '.'.join(filename.split('.')[:-1])
 	else:
-		raise IOError, r'the format of the file are not gff!'
+		raise IOError, r'the format of the file are not gff [suffix: gff]!'
 		
 	with gffopen(filename, 'rb') as handle:
 		idx = 0

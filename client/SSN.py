@@ -49,7 +49,7 @@ class SSNClient(object):
 			DIR: the directory used to store the resulting files
 		'''
 		if not np.all(reference.index == experiment.index):
-			print(r'[ERROR] Index between reference and experiment must be same')
+			print(r'[ERROR] Index between reference and experiment must be the same')
 			raise IndexError
 			
 		self.indexes = reference.index	# genes that contains expression data
